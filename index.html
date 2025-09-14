@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Planetary Date Calculator</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #111114;
+            color: #e0e0e0;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .container {
+            background: #1c1c22;
+            padding: 40px;
+            border-radius: 16px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            max-width: 700px;
+            width: 100%;
+            text-align: center;
+            backdrop-filter: blur(10px);
+        }
+        h1 {
+            color: #ffffff;
+            margin-bottom: 30px;
+            font-weight: 600;
+            font-size: 2rem;
+        }
+        .input-group {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+        }
+        select, input[type="number"] {
+            padding: 12px;
+            border: 1px solid #444;
+            border-radius: 10px;
+            background: #2a2a3a;
+            color: #e0e0e0;
+            font-size: 16px;
+            outline: none;
+            transition: border-color 0.3s, box-shadow 0.3s;
+            text-align: center;
+            appearance: none;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+        }
+        select:focus, input[type="number"]:focus {
+            border-color: #bb86fc;
+            box-shadow: 0 0 8px rgba(187, 134, 252, 0.5);
+        }
+        #planet, #startMonth, #endMonth {
+            text-align: left;
+            text-align-last: left;
+            padding-left: 15px;
+            width: 160px;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%23e0e0e0' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14L2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 10px center;
+        }
+        input[type="number"] {
+            width: 100px;
+        }
+        input[type="number"]::-webkit-inner-spin-button,
+        input[type="number"]::-webkit-outer-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+        .error {
+            border-color: #ff4d4d !important;
+            animation: shake 0.4s ease-in-out;
+            box-shadow: 0 0 8px rgba(255, 77, 77, 0.5);
+        }
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            20%, 60% { transform: translateX(-8px); }
+            40%, 80% { transform: translateX(8px); }
+        }
+        button {
+            padding: 14px 30px;
+            background: linear-gradient(45deg, #bb86fc, #7a3ce2, #bb86fc);
+            background-size: 200%;
+            color: #fff;
+            border: 2px solid transparent;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 18px;
+            font-weight: 600;
+            transition: background 0.3s, transform 0.2s;
+            animation: glow 1.5s linear infinite;
+        }
+        @keyframes glow {
+            0% { background-position: 0% 50%; }
+            100% { background-position: 200% 50%; }
+        }
+        button:hover {
+            background: linear-gradient(45deg, #9f4ce6, #6a2cb2, #9f4ce6);
+            transform: translateY(-2px);
+        }
+        button:active {
+            transform: translateY(0);
+        }
+        #result {
+            margin-top: 30px;
+            padding: 20px 10px;
+            background: #2a2a3a;
+            border-radius: 12px;
+            font-size: 16px;
+            color: #e0e0e0;
+            border: 1px solid #444;
+            min-height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            white-space: normal;
+            width: calc(100% - 20px);
+        }
+        #result .date, #result .years {
+            color: #bb86fc;
+            margin: 0 4px;
+        }
+        @media (max-width: 600px) {
+            .container {
+                padding: 20px;
+            }
+            h1 {
+                font-size: 1.5rem;
+            }
+            select, input[type="number"] {
+                font-size: 14px;
+                padding: 10px;
+            }
+            #planet, #startMonth, #endMonth {
+                width: 140px;
+            }
+            input[type="number"] {
+                width: 80px;
+            }
+            button {
+                padding: 12px 24px;
+                font-size: 16px;
+            }
+            #result {
+                font-size: 14px;
+                padding: 15px 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Planetary Date Calculator</h1>
+        <div class="input-group">
+            <select id="planet">
+                <option value="mercury">Mercury</option>
+                <option value="venus">Venus</option>
+                <option value="mars">Mars</option>
+                <option value="jupiter">Jupiter</option>
+                <option value="saturn">Saturn</option>
+                <option value="uranus">Uranus</option>
+                <option value="neptune">Neptune</option>
+            </select>
+        </div>
+        <div class="input-group">
+            <select id="startMonth" onchange="validateStartDate()">
+                <option value="1">January</option>
+                <option value="2">February</option>
+                <option value="3">March</option>
+                <option value="4">April</option>
+                <option value="5">May</option>
+                <option value="6">June</option>
+                <option value="7">July</option>
+                <option value="8">August</option>
+                <option value="9">September</option>
+                <option value="10">October</option>
+                <option value="11">November</option>
+                <option value="12">December</option>
+            </select>
+            <input type="number" id="startDay" placeholder="Day" min="1" max="31" oninput="validateStartDate()">
+            <input type="number" id="startYear" placeholder="Year" min="1" max="2100" oninput="validateStartDate()">
+        </div>
+        <div class="input-group">
+            <select id="endMonth" onchange="validateEndDate()">
+                <option value="1">January</option>
+                <option value="2">February</option>
+                <option value="3">March</option>
+                <option value="4">April</option>
+                <option value="5">May</option>
+                <option value="6">June</option>
+                <option value="7">July</option>
+                <option value="8">August</option>
+                <option value="9">September</option>
+                <option value="10">October</option>
+                <option value="11">November</option>
+                <option value="12">December</option>
+            </select>
+            <input type="number" id="endDay" placeholder="Day" min="1" max="31" oninput="validateEndDate()">
+            <input type="number" id="endYear" placeholder="Year" min="1" max="2100" oninput="validateEndDate()">
+        </div>
+        <div class="input-group">
+            <button onclick="calculatePlanetaryYears()">Calculate</button>
+        </div>
+        <div id="result"></div>
+    </div>
+
+    <script type="text/javascript">
+        var gk_isXlsx = false;
+        var gk_xlsxFileLookup = {};
+        var gk_fileData = {};
+        function filledCell(cell) {
+            return cell !== '' && cell != null;
+        }
+        function loadFileData(filename) {
+            if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
+                try {
+                    var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
+                    var firstSheetName = workbook.SheetNames[0];
+                    var worksheet = workbook.Sheets[firstSheetName];
+                    var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
+                    var filteredData = jsonData.filter(row => row.some(filledCell));
+                    var headerRowIndex = filteredData.findIndex((row, index) =>
+                        row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
+                    );
+                    if (headerRowIndex === -1 || headerRowIndex > 25) {
+                        headerRowIndex = 0;
+                    }
+                    var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex));
+                    csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
+                    return csv;
+                } catch (e) {
+                    console.error(e);
+                    return "";
+                }
+            }
+            return gk_fileData[filename] || "";
+        }
+
+        const planetaryYears = {
+            mercury: 87.9691,
+            venus: 224.701,
+            mars: 686.971,
+            jupiter: 4332.59,
+            saturn: 10759.22,
+            uranus: 30688.5,
+            neptune: 59800.0
+        };
+
+        function getDaysInMonth(month, year) {
+            const daysInMonth = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+            if (month === 2 && year % 4 === 0 && (year % 100 !== 0 || year % 400 === 0)) {
+                return 29;
+            }
+            return daysInMonth[month - 1];
+        }
+
+        function validateDate(month, day, year, dayInput, yearInput) {
+            let isValid = true;
+            if (day < 1 || day > getDaysInMonth(month, year)) {
+                dayInput.classList.add('error');
+                isValid = false;
+                setTimeout(() => dayInput.classList.remove('error'), 400);
+            } else {
+                dayInput.classList.remove('error');
+            }
+            if (year < 1 || year > 2100) {
+                yearInput.classList.add('error');
+                isValid = false;
+                setTimeout(() => yearInput.classList.remove('error'), 400);
+            } else {
+                yearInput.classList.remove('error');
+            }
+            return isValid;
+        }
+
+        function validateStartDate() {
+            const startMonth = parseInt(document.getElementById('startMonth').value);
+            const startDay = parseInt(document.getElementById('startDay').value);
+            const startYear = parseInt(document.getElementById('startYear').value);
+            if (!startMonth || !startDay || !startYear) return;
+            validateDate(startMonth, startDay, startYear, 
+                document.getElementById('startDay'), 
+                document.getElementById('startYear'));
+        }
+
+        function validateEndDate() {
+            const endMonth = parseInt(document.getElementById('endMonth').value);
+            const endDay = parseInt(document.getElementById('endDay').value);
+            const endYear = parseInt(document.getElementById('endYear').value);
+            if (!endMonth || !endDay || !endYear) return;
+            validateDate(endMonth, endDay, endYear, 
+                document.getElementById('endDay'), 
+                document.getElementById('endYear'));
+        }
+
+        function calculatePlanetaryYears() {
+            const planet = document.getElementById('planet').value;
+            const startMonth = parseInt(document.getElementById('startMonth').value, 10);
+            const startDay = parseInt(document.getElementById('startDay').value, 10);
+            const startYear = parseInt(document.getElementById('startYear').value, 10);
+            const endMonth = parseInt(document.getElementById('endMonth').value, 10);
+            const endDay = parseInt(document.getElementById('endDay').value, 10);
+            const endYear = parseInt(document.getElementById('endYear').value, 10);
+
+            if (!startMonth || !startDay || !startYear || !endMonth || !endDay || !endYear) {
+                document.getElementById('result').innerText = "Please fill in all fields.";
+                return;
+            }
+
+            if (!validateDate(startMonth, startDay, startYear,
+                document.getElementById('startDay'),
+                document.getElementById('startYear'))) {
+                document.getElementById('result').innerText = "Invalid start date.";
+                return;
+            }
+
+            if (!validateDate(endMonth, endDay, endYear,
+                document.getElementById('endDay'),
+                document.getElementById('endYear'))) {
+                document.getElementById('result').innerText = "Invalid end date.";
+                return;
+            }
+
+            const startDate = new Date(startYear, startMonth - 1, startDay);
+            const endDate = new Date(endYear, endMonth - 1, endDay);
+
+            if (isNaN(startDate) || isNaN(endDate)) {
+                document.getElementById('result').innerText = "Invalid date(s) entered.";
+                return;
+            }
+
+            const months = [
+                "January", "February", "March", "April", "May", "June",
+                "July", "August", "September", "October", "November", "December"
+            ];
+            const startDateStr = `<span class="date">${startDay} ${months[startMonth - 1]} ${startYear}</span>`;
+            const endDateStr = `<span class="date">${endDay} ${months[endMonth - 1]} ${endYear}</span>`;
+
+            let earlierDate = startDate;
+            let laterDate = endDate;
+            let startStr = startDateStr;
+            let endStr = endDateStr;
+
+            if (startDate > endDate) {
+                earlierDate = endDate;
+                laterDate = startDate;
+                startStr = endDateStr;
+                endStr = startDateStr;
+            }
+
+            const earthDays = Math.abs((laterDate - earlierDate) / (1000 * 60 * 60 * 24));
+            const planetaryYearInEarthDays = planetaryYears[planet];
+
+            if (!planetaryYearInEarthDays || typeof planetaryYearInEarthDays !== 'number') {
+                document.getElementById('result').innerText = "Invalid planet or planetary data.";
+                return;
+            }
+
+            const yearsOnPlanet = earthDays / planetaryYearInEarthDays;
+
+            document.getElementById('result').innerHTML =
+                `Time between ${startStr} and ${endStr}: <span class="years">${yearsOnPlanet.toFixed(3)}</span> ${planet.charAt(0).toUpperCase() + planet.slice(1)} years`;
+        }
+    </script>
+</body>
+</html>

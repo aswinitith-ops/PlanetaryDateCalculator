@@ -140,9 +140,7 @@
             color: #e0e0e0;
             border: 1px solid #444;
             min-height: 60px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            text-align: center;
             white-space: normal;
             width: calc(100% - 20px);
             box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1);
@@ -402,9 +400,12 @@
             }
 
             const yearsOnPlanet = earthDays / planetaryYearInEarthDays;
+            const monthsOnPlanet = yearsOnPlanet * 12;
 
             document.getElementById('result').innerHTML =
-                `Time between ${startStr} and ${endStr}: <span class="years">${yearsOnPlanet.toFixed(3)}</span> ${planetDisplay} years`;
+                `Time between ${startStr} and ${endStr}:<br><br>
+                <span class="years">${yearsOnPlanet.toFixed(3)}</span> ${planetDisplay} years<br><br>
+                <span class="years">${monthsOnPlanet.toFixed(3)}</span> ${planetDisplay} months`;
         }
     </script>
 </body>

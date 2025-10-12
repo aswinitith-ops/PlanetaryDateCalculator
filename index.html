@@ -191,6 +191,8 @@
                 <option value="saturn">Saturn</option>
                 <option value="uranus">Uranus</option>
                 <option value="neptune">Neptune</option>
+                <option value="moon_sidereal">Moon Sidereal</option>
+                <option value="moon_synodic">Moon Synodic</option>
             </select>
         </div>
         <div class="input-group">
@@ -278,7 +280,9 @@
             jupiter: 4332.59,
             saturn: 10759.22,
             uranus: 30688.5,
-            neptune: 59800.0
+            neptune: 59800.0,
+            moon_sidereal: 27.321661 * 12,
+            moon_synodic: 29.530589 * 12
         };
 
         function getDaysInMonth(month, year) {
@@ -329,7 +333,9 @@
         }
 
         function calculatePlanetaryYears() {
-            const planet = document.getElementById('planet').value;
+            const planetSelect = document.getElementById('planet');
+            const planet = planetSelect.value;
+            const planetDisplay = planetSelect.options[planetSelect.selectedIndex].text;
             const startMonth = parseInt(document.getElementById('startMonth').value, 10);
             const startDay = parseInt(document.getElementById('startDay').value, 10);
             const startYear = parseInt(document.getElementById('startYear').value, 10);
@@ -398,7 +404,7 @@
             const yearsOnPlanet = earthDays / planetaryYearInEarthDays;
 
             document.getElementById('result').innerHTML =
-                `Time between ${startStr} and ${endStr}: <span class="years">${yearsOnPlanet.toFixed(3)}</span> ${planet.charAt(0).toUpperCase() + planet.slice(1)} years`;
+                `Time between ${startStr} and ${endStr}: <span class="years">${yearsOnPlanet.toFixed(3)}</span> ${planetDisplay} years`;
         }
     </script>
 </body>
